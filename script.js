@@ -9,7 +9,8 @@ let score = 0;
 let beanCount = 0;
 let reverseControls = false;
 
-let d = "RIGHT";
+let x1_change = 0;
+let y1_change = 0;
 
 let food = {};
 let gameLoop;
@@ -38,7 +39,8 @@ function init() {
     score = 0;
     beanCount = 0;
     reverseControls = false;
-    d = "RIGHT";
+    x1_change = snake_block;
+    y1_change = 0;
     snake_speed = 15; // Reset to initial speed
     timeLimit = 10;
     startTime = Date.now();
@@ -110,30 +112,19 @@ function game() {
     drawSnake();
     drawFood();
 
-    let snakeX = snake[0].x;
-    let snakeY = snake[0].y;
+    let x1 = snake[0].x;
+    let y1 = snake[0].y;
 
-    if (reverseControls) {
-        if (d === "LEFT") snakeX += snake_block;
-        if (d === "RIGHT") snakeX -= snake_block;
-        if (d === "UP") snakeY += snake_block;
-        if (d === "DOWN") snakeY -= snake_block;
-    } else {
-        if (d === "LEFT") snakeX -= snake_block;
-        if (d === "RIGHT") snakeX += snake_block;
-        if (d === "UP") snakeY -= snake_block;
-        if (d === "DOWN") snakeY += snake_block;
-    }
+    x1 += x1_change;
+    y1 += y1_change;
 
-    if (snakeX >= canvas.width) snakeX = 0;
-    if (snakeX < 0) snakeX = canvas.width - snake_block;
-    if (snakeY >= canvas.height) snakeY = 0;
-    if (snakeY < 0) snakeY = canvas.height - snake_block;
+    // Wall wrapping
+    if (x1 >= canvas.width) x1 = 0;
+    else if (x1 < 0) x1 = canvas.width - snake_block;
+    if (y1 >= canvas.height) y1 = 0;
+    else if (y1 < 0) y1 = canvas.height - snake_block;
 
-    let newHead = {
-        x: snakeX,
-        y: snakeY
-    };
+    let newHead = { x: x1, y: y1 };
 
     if (checkCollision(newHead)) {
         clearInterval(gameLoop);
@@ -144,7 +135,7 @@ function game() {
 
     snake.unshift(newHead);
 
-    if (snakeX === food.x && snakeY === food.y) {
+    if (x1 === food.x && y1 === food.y) {
         score++;
         beanCount++;
         updateScore();
@@ -152,19 +143,9 @@ function game() {
 
         if (beanCount % 5 === 0) {
             snake_speed += 0.35;
-            reverseControls = !reverseControls;
-            
-            // Clear the current interval and set a new one with the updated speed
             clearInterval(gameLoop);
             gameLoop = setInterval(game, 1000 / snake_speed);
-            
-            // Update the direction based on the new control scheme
-            if (reverseControls) {
-                if (d === "LEFT") d = "RIGHT";
-                else if (d === "RIGHT") d = "LEFT";
-                else if (d === "UP") d = "DOWN";
-                else if (d === "DOWN") d = "UP";
-            }
+            reverseControls = !reverseControls;
         }
 
         if (score >= 99) {
@@ -202,10 +183,35 @@ function gameOver(won) {
 document.addEventListener("keydown", direction);
 
 function direction(event) {
-    if (event.keyCode === 37 && d !== "RIGHT") d = "LEFT";
-    else if (event.keyCode === 38 && d !== "DOWN") d = "UP";
-    else if (event.keyCode === 39 && d !== "LEFT") d = "RIGHT";
-    else if (event.keyCode === 40 && d !== "UP") d = "DOWN";
+    if (reverseControls) {
+        if (event.keyCode === 37 && x1_change <= 0) {
+            x1_change = snake_block;
+            y1_change = 0;
+        } else if (event.keyCode === 38 && y1_change <= 0) {
+            x1_change = 0;
+            y1_change = snake_block;
+        } else if (event.keyCode === 39 && x1_change >= 0) {
+            x1_change = -snake_block;
+            y1_change = 0;
+        } else if (event.keyCode === 40 && y1_change >= 0) {
+            x1_change = 0;
+            y1_change = -snake_block;
+        }
+    } else {
+        if (event.keyCode === 37 && x1_change <= 0) {
+            x1_change = -snake_block;
+            y1_change = 0;
+        } else if (event.keyCode === 38 && y1_change <= 0) {
+            x1_change = 0;
+            y1_change = -snake_block;
+        } else if (event.keyCode === 39 && x1_change >= 0) {
+            x1_change = snake_block;
+            y1_change = 0;
+        } else if (event.keyCode === 40 && y1_change >= 0) {
+            x1_change = 0;
+            y1_change = snake_block;
+        }
+    }
 }
 
 document.getElementById('start-button').addEventListener('click', startGame);
