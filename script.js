@@ -2,7 +2,7 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 const snake_block = 10;
-let snake_speed = 10;
+let snake_speed = 15; // Increased initial speed
 
 let snake = [];
 let score = 0;
@@ -19,6 +19,18 @@ let extraTime = 5;
 let startTime;
 let timerInterval;
 
+function showWelcomeScreen() {
+    document.getElementById('welcome-screen').style.display = 'block';
+    document.getElementById('game-container').style.display = 'none';
+    document.getElementById('game-over').style.display = 'none';
+}
+
+function startGame() {
+    document.getElementById('welcome-screen').style.display = 'none';
+    document.getElementById('game-container').style.display = 'block';
+    init();
+}
+
 function init() {
     clearInterval(gameLoop);
     clearInterval(timerInterval);
@@ -27,7 +39,7 @@ function init() {
     beanCount = 0;
     reverseControls = false;
     d = "RIGHT";
-    snake_speed = 10;
+    snake_speed = 15; // Reset to initial speed
     timeLimit = 10;
     startTime = Date.now();
 
@@ -167,6 +179,7 @@ function gameOver(won) {
     const gameOverText = document.getElementById('game-over-text');
     
     gameOverElement.style.display = 'block';
+    document.getElementById('game-container').style.display = 'none';
     
     if (won) {
         const totalTime = Math.floor((Date.now() - startTime) / 1000);
@@ -185,13 +198,13 @@ function direction(event) {
     else if (event.keyCode === 40 && d !== "UP") d = "DOWN";
 }
 
+document.getElementById('start-button').addEventListener('click', startGame);
+
 document.getElementById('replay-button').addEventListener('click', () => {
     document.getElementById('game-over').style.display = 'none';
-    init();
+    startGame();
 });
 
-document.getElementById('quit-button').addEventListener('click', () => {
-    window.close();
-});
+document.getElementById('quit-button').addEventListener('click', showWelcomeScreen);
 
-init();
+showWelcomeScreen(); // Show welcome screen on initial load

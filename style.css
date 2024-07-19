@@ -8,8 +8,28 @@ body {
     font-family: Arial, sans-serif;
 }
 
-#game-container {
-    position: relative;
+#welcome-screen, #game-container, #game-over {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+#welcome-screen {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#game-rules {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+#game-rules ul {
+    padding-left: 20px;
 }
 
 #gameCanvas {
@@ -41,11 +61,6 @@ body {
 }
 
 #game-over {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
     background-color: rgba(0, 0, 0, 0.8);
     padding: 20px;
     border-radius: 10px;
@@ -63,7 +78,7 @@ button {
     cursor: pointer;
 }
 
-#replay-button {
+#start-button, #replay-button {
     background-color: #4CAF50;
     color: white;
     border: none;
