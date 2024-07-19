@@ -152,9 +152,19 @@ function game() {
 
         if (beanCount % 5 === 0) {
             snake_speed += 0.35;
+            reverseControls = !reverseControls;
+            
+            // Clear the current interval and set a new one with the updated speed
             clearInterval(gameLoop);
             gameLoop = setInterval(game, 1000 / snake_speed);
-            reverseControls = !reverseControls;
+            
+            // Update the direction based on the new control scheme
+            if (reverseControls) {
+                if (d === "LEFT") d = "RIGHT";
+                else if (d === "RIGHT") d = "LEFT";
+                else if (d === "UP") d = "DOWN";
+                else if (d === "DOWN") d = "UP";
+            }
         }
 
         if (score >= 99) {
@@ -185,7 +195,7 @@ function gameOver(won) {
         const totalTime = Math.floor((Date.now() - startTime) / 1000);
         gameOverText.innerText = `Congratulations! You won the game in ${totalTime} seconds.`;
     } else {
-        gameOverText.innerText = "Time's up! You lost.";
+        gameOverText.innerText = "Game Over! You lost.";
     }
 }
 
